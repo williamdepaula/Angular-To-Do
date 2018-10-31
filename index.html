@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html ng-app="ToDo">
+<head>
+	<title>Angular To-Do</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<style type="text/css">
+		.jumbotron {
+			width: 400px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+		.finalizado {
+			text-decoration: line-through;
+			background-color: lightgray;
+		}
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+	
+	<script type="text/javascript">
+		angular.module('ToDo', []);
+		angular.module('ToDo').controller('ToDoCtrl', function ($scope) {
+			$scope.todos = [
+				{item: "Lavar louça", finalizado: true},
+				{item: "Trabalho de Alg II", finalizado: false},
+			];
+
+			$scope.addToDo = function (todo) {
+				todo.finalizado=false;
+				$scope.todos.push(angular.copy(todo));
+				delete $scope.todo;
+			};
+
+			// Função que filtra lista removendo os contatos marcados para deletar
+			$scope.delToDos = function (todos) {
+				$scope.todos = todos.filter(function (todo) {
+					if (!todo.del) return todo;
+				});
+			}
+
+			$scope.delToDo = function (todo) {
+				todo.del = true;
+				this.delToDos($scope.todos);
+			};
+		});
+
+	</script>
+</head>
+<body>
+	<div ng-controller="ToDoCtrl" class="jumbotron">
+		<h3>Lista To-Do</h3>
+		<form name="addForm">
+			<input class="form-control" type="text" placeholder="Item To-Do" ng-model="todo.item" ng-required="true" />		
+			<button class="btn btn-primary btn-block" ng-click="addToDo(todo)" ng-disabled="addForm.$invalid">Adicionar Item</button>	
+		</form>
+		
+		<hr />
+		<table class="table">
+			<tr>
+				<th></th>
+				<th>To-Do</th>
+				<th>Ação</th>
+			</tr>
+			<tr ng-repeat="todo in todos" ng-class="{finalizado: todo.finalizado}">
+				<td><input type="checkbox" ng-model="todo.finalizado" ng-checked="todo.finalizado" /></td>
+				<td>{{todo.item}}</td>
+				<td><button class="btn btn-primary btn-sm" ng-click="delToDo(todo)">Apagar</button></td>
+			</tr>
+		</table>			
+	</div>
+</body>
+</html>
